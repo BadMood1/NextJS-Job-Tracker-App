@@ -1,12 +1,61 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { signUp } from "@/lib/auth/auth-client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+type SignUpInfo = {
+    name: string;
+    email: string;
+    password: string;
+};
 
 export default function SignUpPage() {
+    const [formInfo, setFormInfo] = useState<SignUpInfo>({
+        name: "",
+        email: "",
+        password: "",
+    });
+
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setFormInfo((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        setError("");
+        setLoading(true);
+
+        try {
+            const result = await signUp.email(formInfo);
+
+            if (result.error) {
+                setError(result.error.message ?? "Failed to sign up");
+            } else {
+                router.push("/dashboard");
+            }
+        } catch (err) {
+            setError("An unexpected error occured");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white p-4">
             <Card className="w-full max-w-md">
@@ -16,19 +65,44 @@ export default function SignUpPage() {
                         Create an account to start tracking your job applications
                     </CardDescription>
                 </CardHeader>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <CardContent className="flex flex-col gap-4 [&_Input]:focus:border-primary [&_Input]:focus:ring-1 [&_Input]:focus:ring-primary">
                         <div className="flex flex-col gap-1 text-gray-800">
                             <Label htmlFor="name">Name</Label>
-                            <Input id="name" type="text" placeholder="John Doe" required />
+                            <Input
+                                id="name"
+                                name="name"
+                                value={formInfo.name}
+                                type="text"
+                                placeholder="John Doe"
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                         <div className="flex flex-col gap-1 text-gray-800">
                             <Label htmlFor="email">Email</Label>
-                            <Input id="email" type="email" placeholder="john@example.com" required />
+                            <Input
+                                id="email"
+                                name="email"
+                                value={formInfo.email}
+                                type="email"
+                                placeholder="john@example.com"
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                         <div className="flex flex-col gap-1 text-gray-800">
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" minLength={8} placeholder="" required />
+                            <Input
+                                id="password"
+                                name="password"
+                                value={formInfo.password}
+                                type="password"
+                                minLength={8}
+                                placeholder=""
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4">
