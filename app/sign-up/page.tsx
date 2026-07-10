@@ -67,6 +67,11 @@ export default function SignUpPage() {
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
                     <CardContent className="flex flex-col gap-4 [&_Input]:focus:border-primary [&_Input]:focus:ring-1 [&_Input]:focus:ring-primary">
+                        {error && (
+                            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                                {error}
+                            </div>
+                        )}
                         <div className="flex flex-col gap-1 text-gray-800">
                             <Label htmlFor="name">Name</Label>
                             <Input
@@ -106,8 +111,8 @@ export default function SignUpPage() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4">
-                        <Button type="submit" className="w-full cursor-pointer h-10">
-                            Sign Up
+                        <Button type="submit" className="w-full cursor-pointer h-10" disabled={loading}>
+                            {loading ? "Creating account..." : "Sign Up"}
                         </Button>
                         <p>
                             Already have an account?{" "}

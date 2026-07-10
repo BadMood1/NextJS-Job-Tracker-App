@@ -1,10 +1,14 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
+// Подключение к MongoDB для Better Auth.
 const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db();
 
+// Инициализация Better Auth с MongoDB адаптером.
 export const auth = betterAuth({
     database: mongodbAdapter(db, {
         client,
@@ -13,3 +17,22 @@ export const auth = betterAuth({
         enabled: true,
     },
 });
+
+// Получение текущей сессии пользователя на сервере.
+export async function getSession() {
+    const result = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    return result;
+}
+
+export async function signOut() {
+    const result = await auth.api.signOut({
+        headers: await headers(),
+    });
+
+    if (result.success) {
+        redirect("/sign-in");
+    }
+}

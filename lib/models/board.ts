@@ -1,0 +1,11 @@
+import mongoose, { Schema, Document } from "mongoose";
+
+export interface IBoard extends Document {
+    name: string;
+    userId: string;
+    columns: mongoose.Types.ObjectId[]; // список других коллекций
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// const BoardSchema: Schema<IBoard> = new
