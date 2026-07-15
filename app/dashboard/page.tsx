@@ -1,3 +1,4 @@
+"use cache";
 import KanbanBoard from "@/components/canban-board";
 import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";

@@ -36,8 +36,8 @@ export async function initializeUserBoard(userId: string) {
                 Column.create({
                     name: col.name,
                     order: col.order,
-                    boardId: board._id, // Так хранится id в MongoDB
-                    jobApplication: [],
+                    boardId: board._id,
+                    jobApplications: [],
                 }),
             ),
         );
