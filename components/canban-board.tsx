@@ -1,22 +1,12 @@
 "use client";
 import { Board, Column, JobApplication } from "@/lib/models/models.types";
-import {
-    Calendar,
-    CheckCircle2,
-    Mic,
-    Award,
-    XCircle,
-    MoreHorizontal,
-    MoreVertical,
-    Trash,
-    Trash2,
-} from "lucide-react";
+import { Calendar, CheckCircle2, Mic, Award, XCircle, MoreVertical, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import CreateJobApplicationDialog from "./create-job-dialog";
-import board from "@/lib/models/board";
 import JobApplicationCard from "./job-application-card";
+import { useBoard } from "@/lib/hooks/useBoards";
 
 interface KanbanBoardProps {
     board: Board;
@@ -115,7 +105,7 @@ function SortableJobCard({ job, columns }: { job: JobApplication; columns: Colum
 }
 
 export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
-    const columns = board.columns;
+    const {} = useBoard(board);
 
     const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
 

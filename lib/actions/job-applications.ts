@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getSession } from "../auth/auth";
 import connectDB from "../db";
 import { Board, Column, JobApplication } from "../models";
@@ -80,5 +81,39 @@ export async function createJobApplication(data: JobApplicationData) {
     // Обновляем колонку — добавляем ID новой заявки в массив jobApplications внутри документа Column
     // Это создаёт СВЯЗЬ: колонка теперь "знает" о всех заявках, которые в ней находятся
 
+    revalidatePath(`/dashboard`); // Обновляем страницу доски, чтобы отобразить новую заявку
+
     return { data: JSON.parse(JSON.stringify(jobApplication)) };
+}
+
+export async function updateJobApplication(
+    id: string,
+    updates: {
+        company?: string;
+        position?: string;
+        location?: string;
+        status?: string;
+        notes?: string;
+        salary?: string;
+        jobUrl?: string;
+        order?: number;
+        tags?: string[];
+        description?: string;
+    },
+) {
+    const session = await getSession();
+
+    if (!session?.user) {
+        throw new Error("User is not authenticated");
+    }
+
+    const jobApplication = await JobApplication.findById(id);
+
+    if (!jobApplication) {
+        return { error: "Job application not found" };
+    }
+
+    if (jobApplication.userId.toString() !== session.user.id) {
+        return { error: "User does not have permission to update this job application" };
+    }
 }
